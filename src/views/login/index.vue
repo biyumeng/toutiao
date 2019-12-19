@@ -5,8 +5,8 @@
 
       <!-- 表单 -->
       <el-form :model="loginForm" :rules="loginRules" ref="myForm">
-        <el-form-item prop="phone">
-          <el-input placeholder="请输入手机号" v-model="loginForm.phone"></el-input>
+        <el-form-item prop="mobile">
+          <el-input placeholder="请输入手机号" v-model="loginForm.mobile"></el-input>
         </el-form-item>
 
         <el-form-item prop="code">
@@ -33,14 +33,14 @@ export default {
   data () {
     return {
       loginForm: {
-        phone: '', // 手机号
+        mobile: '', // 手机号
         code: '', // 验证码
         check: false // 是否同意协议
       },
       loginRules: {
         //   决定着校验规则  key(字段名):value(对象数组) => 一个对象就是一个校验规则
         // required 为true 就表示该字段必填 如果不填 就会提示消息
-        phone: [
+        mobile: [
           { required: true, message: '请输入手机号' },
           { pattern: /^((13[0-9])|(17[0-1,6-8])|(15[^4,\\D])|(18[0-9]))\d{8}$/, message: '手机号格式不正确' }
         ],
@@ -71,9 +71,17 @@ export default {
     submitLogin () {
       // 校验整个表单的规则
       // validate 是一个方法 => 方法中传入的一个函数 两个校验参数  是否校验成功/未校验成功的字段
-      this.$refs.myForm.validate(function (isOK) {
+      this.$refs.myForm.validate((isOK) => {
         if (isOK) {
-          console.log('校验通过')
+          this.$axios({
+            url: '/authorizations',
+            method: 'post',
+            data: this.loginForm
+          }).then(result => {
+            window.localStorage.setItem('user-token', result.data.data.token)
+          }).catch(() => {
+
+          })
         }
       })
     }
