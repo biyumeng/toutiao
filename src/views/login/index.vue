@@ -4,7 +4,7 @@
       <div class="title"><img src="../../assets/img/logo_index.png" alt=""></div>
 
       <!-- 表单 -->
-      <el-form :model="loginForm" :rules="loginRules">
+      <el-form :model="loginForm" :rules="loginRules" ref="myForm">
         <el-form-item prop="phone">
           <el-input placeholder="请输入手机号" v-model="loginForm.phone"></el-input>
         </el-form-item>
@@ -19,7 +19,7 @@
         </el-form-item>
 
         <el-form-item>
-          <el-button type="primary" style="width:100%;">登录</el-button>
+          <el-button type="primary" style="width:100%;" @click="submitLogin">登录</el-button>
         </el-form-item>
       </el-form>
 
@@ -28,17 +28,54 @@
 </template>
 
 <script>
+// import { log } from 'util'
 export default {
   data () {
     return {
       loginForm: {
-        phone: '',
-        code: '',
-        check: false
+        phone: '', // 手机号
+        code: '', // 验证码
+        check: false // 是否同意协议
       },
       loginRules: {
-
+        //   决定着校验规则  key(字段名):value(对象数组) => 一个对象就是一个校验规则
+        // required 为true 就表示该字段必填 如果不填 就会提示消息
+        phone: [
+          { required: true, message: '请输入手机号' },
+          { pattern: /^((13[0-9])|(17[0-1,6-8])|(15[^4,\\D])|(18[0-9]))\d{8}$/, message: '手机号格式不正确' }
+        ],
+        code: [
+          { required: true, message: '请输入验证码' },
+          { pattern: /^\d{6}$/, message: '验证码格式不正确' }
+        ],
+        check: [
+          // 自定义校验函数
+          { validator: function (rule, value, callback) {
+            // rule 规则 没用
+            // value 要校验的字段值
+            // callback是回调函数
+            if (value) {
+              // 如果是true 认为已经勾选
+              callback() // 认为当前规则校验通过
+            } else {
+              // 认为没勾选
+              callback(new Error('请同意我们的用户协议和隐私条款')) // 认为当前规则校验失败，给出提示信息
+            }
+          }
+          }
+        ]
       }
+    }
+  },
+  methods: {
+    submitLogin () {
+      // 校验整个表单的规则
+      // validate 是一个方法 => 方法中传入的一个函数 两个校验参数  是否校验成功/未校验成功的字段
+      this.$refs.myForm.validate(function (isOK) {
+        if (isOK) {
+          console.log('校验通过')
+        }
+      })
     }
   }
 }
