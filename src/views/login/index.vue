@@ -80,12 +80,13 @@ export default {
           }).then(result => {
             window.localStorage.setItem('user-token', result.data.token)
             this.$router.push('/home')
-          }).catch(() => {
-            this.$message({
-              message: '您的手机号或验证码有错误',
-              type: 'warning'
-            })
           })
+          // .catch(() => {
+          //   this.$message({
+          //     message: '您的手机号或验证码有错误',
+          //     type: 'warning'
+          //   })
+          // })
         }
       })
     }

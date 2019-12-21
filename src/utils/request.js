@@ -1,5 +1,7 @@
 // 封装一个axios
 import axios from 'axios'
+import router from '../router'
+import { Message } from 'element-ui'
 
 // 请求拦截器
 axios.interceptors.request.use(function (config) {
@@ -13,9 +15,31 @@ axios.interceptors.request.use(function (config) {
 
 // 响应拦截器
 axios.interceptors.response.use(function (response) {
+  // 成功时
   return response.data ? response.data : {}
-}, function () {
-
+}, function (error) {
+  // 失败时
+  let status = error.response.status
+  let message = ''
+  switch (status) {
+    case 400:
+      message = '请求参数错误'
+      break
+    case 507:
+      message = '服务器数据库异常'
+      break
+    case 401:
+      // token过期或失效
+      window.localStorage.removeItem('user-token')
+      router.push('/login')
+      break
+    case 403:
+      message = '没有设置这条评论的权限'
+      break
+    default:
+      break
+  }
+  Message({ type: 'warning', message })// 提示信息显示
 })
 
 export default axios
