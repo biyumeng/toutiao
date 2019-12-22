@@ -11,9 +11,11 @@
           <el-table-column prop="total_comment_count" label="总评论数"></el-table-column>
           <el-table-column prop="fans_comment_count" label="粉丝评论数"></el-table-column>
           <el-table-column label="操作">
+              <!-- 作用域插槽 -->
               <template slot-scope="obj">
                 <el-button size="small" type="text">修改</el-button>
-                <el-button size="small" type="text">{{obj.row.comment_status?'关闭':'打开'}}评论</el-button>
+                <!-- 根据状态来判断评论是否打开或关闭 -->
+                <el-button @click="openOrCloseState(obj.row)" size="small" type="text">{{obj.row.comment_status?'关闭':'打开'}}评论</el-button>
               </template>
           </el-table-column>
       </el-table>
@@ -28,6 +30,7 @@ export default {
     }
   },
   methods: {
+    // 获取评论信息
     getComment () {
       this.$axios({
         url: '/articles',
@@ -39,8 +42,25 @@ export default {
     formatterBoolean (row, colum, cellValue, index) {
       // row当前行数据  colum当前列信息  cellValue当前单元格的值  index索引
       return cellValue ? '正常' : '关闭'
+    },
+
+    // 打开或关闭评论
+    openOrCloseState (row) {
+      let mess = row.comment_status ? '关闭' : '开启'
+      this.$confirm(`此操作将${mess}评论，是否进行此操作?`, '提示').then(() => {
+        this.$axios({
+          method: 'put',
+          url: '/comments/status',
+          params: { article_id: row.id },
+          data: { allow_comment: !row.comment_status }
+        }).then(result => {
+          this.getComment()
+        })
+      })
     }
   },
+
+  // 钩子函数调用
   created () {
     this.getComment() // 获取评论数据
   }
