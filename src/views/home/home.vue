@@ -1,5 +1,5 @@
 <template>
-<el-carousel :interval="2500" type="card" height="300px">
+<el-carousel :interval="4000" type="card" height="350px">
     <el-carousel-item v-for="item in list" :key="item">
       <!-- <h3 class="medium">{{ item }}</h3> -->
       <img :src="item" alt="">
@@ -11,7 +11,7 @@
 export default {
   data () {
     return {
-      list: ['https://ss1.bdstatic.com/70cFuXSh_Q1YnxGkpoWK1HF6hhy/it/u=2044511392,3442362113&fm=26&gp=0.jpg', 'https://ss2.bdstatic.com/70cFvnSh_Q1YnxGkpoWK1HF6hhy/it/u=1870009744,2586288392&fm=26&gp=0.jpg', 'https://ss1.bdstatic.com/70cFvXSh_Q1YnxGkpoWK1HF6hhy/it/u=2332656088,2138285815&fm=26&gp=0.jpg']
+      list: ['https://desk-fd.zol-img.com.cn/t_s960x600c5/g5/M00/02/06/ChMkJ1bKyhuIGRtXAAbBuD0Zv5YAALIWwFttD0ABsHQ210.jpg', 'https://desk-fd.zol-img.com.cn/t_s960x600c5/g5/M00/02/0A/ChMkJlbKz1OIExEzAAPwXPnZ9VoAALJUAGPoNgAA_B0033.jpg', 'https://desk-fd.zol-img.com.cn/t_s960x600c5/g4/M09/08/08/Cg-4y1TQL-qICShGABkB7JQ0AHYAATwkQIefFgAGQIE224.jpg', 'https://desk-fd.zol-img.com.cn/t_s960x600c5/g2/M00/0A/09/Cg-4WlWSUxyIWFetABBPRnTfvisAAGOFQPoX9oAEE9e254.jpg', 'https://desk-fd.zol-img.com.cn/t_s960x600c5/g4/M0B/03/00/Cg-4y1TZbYeIPwEsAAcKG5QBv8oAAUaewAZXHkABwoz876.jpg']
     }
   }
 }
