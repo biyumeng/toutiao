@@ -2,6 +2,7 @@
 import axios from 'axios'
 import router from '../router'
 import { Message } from 'element-ui'
+import JSONBig from 'json-bigint'
 
 // 请求拦截器
 axios.interceptors.request.use(function (config) {
@@ -12,6 +13,11 @@ axios.interceptors.request.use(function (config) {
 }, function () {
   // 执行请求失败
 })
+
+axios.defaults.transformResponse = [function (data) {
+  let result = JSONBig.parse(data) // 解决js处理大数字失帧问题
+  return result
+}]
 
 // 响应拦截器
 axios.interceptors.response.use(function (response) {
@@ -40,6 +46,7 @@ axios.interceptors.response.use(function (response) {
       break
   }
   Message({ type: 'warning', message })// 提示信息显示
+  return Promise.reject(error) // 只要reject 就会到catch中
 })
 
 export default axios
