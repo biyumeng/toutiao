@@ -5,7 +5,7 @@
         <template slot="title">评论管理</template>
       </bread-crumb>
       <!-- 表格 -->
-      <el-table :data="list">
+      <el-table :data="list" v-loading="loading">
           <el-table-column prop="title" label="标题" width="600"></el-table-column>
           <el-table-column :formatter="formatterBoolean" prop="comment_status" label="评论状态"></el-table-column>
           <el-table-column prop="total_comment_count" label="总评论数"></el-table-column>
@@ -43,7 +43,8 @@ export default {
         total: 0,
         pageSize: 10,
         currentPage: 1
-      } // 专门存放分页信息
+      }, // 专门存放分页信息
+      loading: false
     }
   },
   methods: {
@@ -55,12 +56,14 @@ export default {
 
     // 获取评论信息
     getComment () {
+      this.loading = true // 打开加载进度条
       this.$axios({
         url: '/articles',
         params: { response_type: 'comment', page: this.page.currentPage, per_page: this.page.pageSize }
       }).then(result => {
         this.list = result.data.results
         this.page.total = result.data.total_count // 总条数
+        this.loading = false // 关闭加载进度条
       })
     },
     formatterBoolean (row, colum, cellValue, index) {
