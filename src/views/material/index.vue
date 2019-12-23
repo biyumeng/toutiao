@@ -22,8 +22,8 @@
                 <el-card class="img-card" v-for="item in list" :key="item.id">
                   <img :src="item.url" alt="">
                   <el-row class="operate" type="flex" align="middle" justify="space-around">
-                    <i class="el-icon-delete-solid"></i>
-                    <i class="el-icon-star-on"></i>
+                    <i @click="collectOrCancel(item)" :style="{ color:item.is_collected?'red':'#000' }" class="el-icon-star-on"></i>
+                    <i @click="delMaterial(item.id)" class="el-icon-delete-solid"></i>
                   </el-row>
                 </el-card>
               </div>
@@ -52,6 +52,7 @@
 </template>
 
 <script>
+// import { url } from 'inspector'
 export default {
   data () {
     return {
@@ -66,6 +67,31 @@ export default {
     }
   },
   methods: {
+    // 删除用户素材
+    delMaterial (id) {
+      this.$confirm('您确定要删除此图片吗？').then(() => {
+        this.$axios({
+          method: 'delete',
+          url: `/user/images/${id}`
+        }).then((res) => {
+          this.getMaterial()
+        })
+      })
+    },
+
+    // 取消或收藏
+    collectOrCancel (item) {
+      this.$axios({
+        method: 'put',
+        url: `/user/images/${item.id}`,
+        data: {
+          collect: !item.is_collected // 取反 因为收藏状态就要取消收藏
+        }
+      }).then(res => {
+        this.getMaterial()
+      })
+    },
+
     // 上传图片
     uploadImg (params) {
       this.loading = true // 打开弹层
@@ -137,6 +163,9 @@ export default {
         bottom: 0;
         font-size: 20px;
         background-color: #f4f5f6;
+        i{
+          cursor: pointer;
+        }
       }
     }
   }

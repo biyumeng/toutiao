@@ -15,8 +15,8 @@ axios.interceptors.request.use(function (config) {
 })
 
 axios.defaults.transformResponse = [function (data) {
-  let result = JSONBig.parse(data) // 解决js处理大数字失帧问题
-  return result
+  // 解决js处理大数字失帧问题 判断data是否存在，存在才会处理
+  return data ? JSONBig.parse(data) : {}
 }]
 
 // 响应拦截器
