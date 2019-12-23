@@ -19,6 +19,7 @@
                   </el-row>
                 </el-card>
               </div>
+
             </el-tab-pane>
             <el-tab-pane label="收藏图片" name="collect">
               <div class="img-list">
@@ -28,6 +29,17 @@
               </div>
             </el-tab-pane>
         </el-tabs>
+        <!-- 公共分页 -->
+        <el-row type="flex" justify="center" align="middle" style="height:80px">
+          <el-pagination
+              background
+              layout="prev, pager, next"
+              :total="page.total"
+              :page-size="page.pageSize"
+              :current-page="page.currentPage"
+              @current-change="changePage">
+          </el-pagination>
+        </el-row>
     </el-card>
 </template>
 
@@ -36,13 +48,25 @@ export default {
   data () {
     return {
       activeName: 'all', // 当前选中的标签
-      list: [] // 接收素材的数据
+      list: [], // 接收素材的数据
+      page: {
+        total: 0,
+        pageSize: 12,
+        currentPage: 1
+      } // 专门存放分页信息
     }
   },
   methods: {
+    // 改变页码方法
+    changePage (newPage) {
+      this.page.currentPage = newPage
+      this.getMaterial()
+    },
+
     // 切换页签方法
     // 切换后this.activeName改变
     changeTab () {
+      this.page.currentPage = 1 // 重置回到第一页
       this.getMaterial()
     },
 
@@ -51,11 +75,14 @@ export default {
       this.$axios({
         url: '/user/images',
         params: {
+          page: this.page.currentPage,
+          per_page: this.page.pageSize,
           // 根据文档传入false是获得所有数据 传入true是获得收藏数据 如果《this.activeName === 'collect'》是true这显示收藏的图片，false显示全部
           collect: this.activeName === 'collect'
         }
       }).then(result => {
-        this.list = result.data.results
+        this.list = result.data.results // 获得图片数据
+        this.page.total = result.data.total_count // 获得总条数
       })
     }
   },
