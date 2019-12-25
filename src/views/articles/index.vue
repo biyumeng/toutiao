@@ -9,6 +9,16 @@
       <el-form style="padding-left:50px">
           <el-form-item label="文章状态:">
               <!-- 单选框组 -->
+              <!-- 第一种使用监听组件的方法搜索 -->
+              <!-- <el-radio-group v-model="searchForm.status" @change="changCondition">
+                <el-radio :label="5">全部</el-radio>
+                  <el-radio :label="0">草稿</el-radio>
+                  <el-radio :label="1">待审核</el-radio>
+                  <el-radio :label="2">审核通过</el-radio>
+                  <el-radio :label="3">审核失败</el-radio>
+              </el-radio-group> -->
+
+              <!-- 第二种使用watch方法搜索 -->
               <el-radio-group v-model="searchForm.status">
                   <!-- 文章状态 0-草稿，1-待审核，2-审核通过，3-审核失败，4-已删除 -->
                   <el-radio :label="5">全部</el-radio>
@@ -16,10 +26,16 @@
                   <el-radio :label="1">待审核</el-radio>
                   <el-radio :label="2">审核通过</el-radio>
                   <el-radio :label="3">审核失败</el-radio>
-
               </el-radio-group>
+
           </el-form-item>
           <el-form-item label="频道列表:">
+              <!-- 第一种使用监听组件的方法 -->
+              <!-- <el-select @change="changCondition" placeholder="请选择频道" v-model="searchForm.channels_id">
+                <el-option v-for="item in channels" :key="item.id" :label="item.name" :value="item.id"></el-option>
+              </el-select> -->
+
+              <!-- 第二种使用watch方法搜索 -->
               <el-select placeholder="请选择频道" v-model="searchForm.channels_id">
                   <!-- el-option中label是选择值 value是存储值 -->
                   <el-option v-for="item in channels" :key="item.id" :label="item.name" :value="item.id"></el-option>
@@ -27,11 +43,24 @@
           </el-form-item>
           <el-form-item label="时间选择:">
               <!-- 日期选择器 -->
+              <!-- 第一种使用监听组件的方法 -->
+              <!-- <el-date-picker
+                v-model="searchForm.dateRange"
+                type="daterange"
+                start-placeholder="开始日期"
+                end-placeholder="结束日期"
+                value-format="yyyy-MM-dd"
+                @change="changCondition">
+              </el-date-picker> -->
+
+              <!-- 第二种使用watch方法搜索 -->
               <el-date-picker
                 v-model="searchForm.dateRange"
                 type="daterange"
                 start-placeholder="开始日期"
-                end-placeholder="结束日期">
+                end-placeholder="结束日期"
+                value-format="yyyy-MM-dd"
+                @change="changCondition">
               </el-date-picker>
           </el-form-item>
       </el-form>
@@ -77,6 +106,14 @@ export default {
       defaultImg: require('../../assets/img/userlogo.jpg') // 默认图片地址
     }
   },
+  watch: {
+    searchForm: {
+      handler: function () {
+        this.changCondition()
+      },
+      deep: true
+    }
+  },
   // 过滤器
   filters: {
     // 标签内容
@@ -110,6 +147,17 @@ export default {
     }
   },
   methods: {
+    // 改变搜索条件
+    changCondition () {
+      let params = {
+        status: this.searchForm.status === 5 ? null : this.searchForm.status, // 因为5是前端自己定义的所有要改为null
+        channel_id: this.searchForm.channels_id, // 分类
+        begin_pubdate: this.searchForm.dateRange.length ? this.searchForm.dateRange[0] : null, // 开始时间
+        end_pubdate: this.searchForm.dateRange.length > 1 ? this.searchForm.dateRange[1] : null // 截止时间
+      }
+      this.getArticles(params)
+    },
+
     // 获取所有的频道
     getChannels () {
       this.$axios({
@@ -119,9 +167,10 @@ export default {
       })
     },
     // 获取文章列表数据
-    getArticles () {
+    getArticles (params) {
       this.$axios({
-        url: '/articles'
+        url: '/articles',
+        params
       }).then(result => {
         this.list = result.data.results
       })
