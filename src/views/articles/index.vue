@@ -68,7 +68,7 @@
         <!-- 主体内容 -->
       <el-row class="total" type="flex" justify="middle">
           <span>
-              共找到12345条符合条件的内容
+              共找到{{page.total}}条符合条件的内容
           </span>
       </el-row>
       <div class="article-item" v-for="item in list" :key="item.id.toString()">
@@ -85,7 +85,7 @@
           <!-- 右侧 -->
           <div class="right">
               <span><i class="el-icon-edit"></i>修改</span>
-              <span><i class="el-icon-delete"></i>删除</span>
+              <span @click="delMaterial(item.id)"><i class="el-icon-delete"></i>删除</span>
           </div>
       </div>
 
@@ -164,16 +164,35 @@ export default {
     }
   },
   methods: {
+    // 删除方法
+    delMaterial (id) {
+      this.$confirm('是否删除文章？').then(() => {
+        // 调用删除接口
+        this.$axios({
+          method: 'delete',
+          url: `/articles/${id.toString()}`
+        }).then(result => {
+          // 提示
+          this.$message({
+            type: 'success',
+            message: '删除成功'
+          })
+          // 重新拉取数据
+          this.getConditionArticle()
+        })
+      })
+    },
+
     // 改变页码方法
     changePage (newPage) {
-      this.page.currentPage = newPage
-      this.getConditionArticle()
+      this.page.currentPage = newPage // 最新页码
+      this.getConditionArticle() // 调用获取文章数据
     },
 
     // 改变搜索条件
     changCondition () {
       this.page.currentPage = 1 // 添加搜索条件后强制重置到第一页
-      this.getConditionArticle()
+      this.getConditionArticle() // 调用获取文章数据
     },
     // 将条件改变时的params封装
     getConditionArticle () {
