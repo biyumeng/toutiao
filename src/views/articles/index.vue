@@ -88,6 +88,18 @@
               <span><i class="el-icon-delete"></i>删除</span>
           </div>
       </div>
+
+      <!-- 分页组件 -->
+      <el-row type="flex" justify="center" style="height:60px" align="middle">
+        <el-pagination
+          background
+          layout="prev, pager, next"
+          :total="page.total"
+          :current-page="page.currentPage"
+          :page-size="page.pageSize"
+          @current-change="changePage">
+        </el-pagination>
+      </el-row>
   </el-card>
 
 </template>
@@ -103,7 +115,12 @@ export default {
       },
       channels: [], // 接收频道数组
       list: [], // 接收文章列表数据
-      defaultImg: require('../../assets/img/userlogo.jpg') // 默认图片地址
+      defaultImg: require('../../assets/img/userlogo.jpg'), // 默认图片地址
+      page: {
+        total: 0,
+        pageSize: 10,
+        currentPage: 1
+      } // 专门存放分页信息
     }
   },
   watch: {
@@ -147,9 +164,22 @@ export default {
     }
   },
   methods: {
+    // 改变页码方法
+    changePage (newPage) {
+      this.page.currentPage = newPage
+      this.getConditionArticle()
+    },
+
     // 改变搜索条件
     changCondition () {
+      this.page.currentPage = 1 // 添加搜索条件后强制重置到第一页
+      this.getConditionArticle()
+    },
+    // 将条件改变时的params封装
+    getConditionArticle () {
       let params = {
+        page: this.page.currentPage, // 当前页码
+        per_page: this.page.pageSize, // 每页数量
         status: this.searchForm.status === 5 ? null : this.searchForm.status, // 因为5是前端自己定义的所有要改为null
         channel_id: this.searchForm.channels_id, // 分类
         begin_pubdate: this.searchForm.dateRange.length ? this.searchForm.dateRange[0] : null, // 开始时间
@@ -172,13 +202,14 @@ export default {
         url: '/articles',
         params
       }).then(result => {
-        this.list = result.data.results
+        this.list = result.data.results // 获得文章列表数据
+        this.page.total = result.data.total_count
       })
     }
   },
   created () {
     this.getChannels() // 获取文章数据
-    this.getArticles() // 获取文章列表数据
+    this.getArticles({ page: 1, per_page: 10 }) // 获取文章列表数据
   }
 }
 </script>
