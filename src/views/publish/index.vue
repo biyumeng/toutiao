@@ -57,6 +57,26 @@ export default {
       }
     }
   },
+  watch: {
+    // 处理了 两个地址对应同一组件 组件没消毁 数据也没重置问题
+    $route: function (to, from) {
+      if (to.params.articleId) {
+        // 是修改
+
+      } else {
+        // 是发布
+        this.formData = {
+          title: '', // 文章标题
+          content: '', // 文章内容
+          cover: {
+            type: 0, // 封面类型 -1:自动，0-无图，1-1张，3-3张
+            images: [] // 放置封面地址
+          },
+          channel_id: null // 频道id 默认没id
+        }
+      }
+    }
+  },
   methods: {
     // 获取所有的频道
     getChannels () {
@@ -86,10 +106,20 @@ export default {
           })
         }
       })
+    },
+    // 通过id查询文章数据
+    getarticleById (articleId) {
+      this.$axios({
+        url: `/articles/${articleId}`
+      }).then(result => {
+        this.formData = result.data // 将数据赋值data
+      })
     }
   },
   created () {
     this.getChannels()
+    let { articleId } = this.$route.params
+    articleId && this.getarticleById(articleId)
   }
 }
 </script>

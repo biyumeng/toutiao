@@ -84,7 +84,7 @@
           </div>
           <!-- 右侧 -->
           <div class="right">
-              <span><i class="el-icon-edit"></i>修改</span>
+              <span @click="toModify(item.id)"><i class="el-icon-edit"></i>修改</span>
               <span @click="delMaterial(item.id)"><i class="el-icon-delete"></i>删除</span>
           </div>
       </div>
@@ -164,6 +164,10 @@ export default {
     }
   },
   methods: {
+    // 点击修改跳转到发布页码
+    toModify (id) {
+      this.$router.push(`/home/publish/${id.toString()}`)
+    },
     // 删除方法
     delMaterial (id) {
       this.$confirm('是否删除文章？').then(() => {
