@@ -90,10 +90,10 @@ export default {
     publistArticle (draft) {
       this.$refs.publistForm.validate(isOK => {
         if (isOK) {
-          // 调用发布接口
+          let { articleId } = this.$route.params // 获取动态路由参数
           this.$axios({
-            url: '/articles',
-            method: 'post',
+            url: articleId ? `/articles/${articleId}` : '/articles',
+            method: articleId ? 'put' : 'post',
             params: { draft }, // 查询参数
             data: this.formData // 请求体参数
           }).then(() => {
@@ -104,6 +104,38 @@ export default {
             // 跳转到文章列表页
             this.$router.push('/home/articles')
           })
+
+        //   if (articleId) {
+        //     // 修改文章接口
+        //     this.$axios({
+        //       url: `/articles/${articleId}`,
+        //       method: 'put',
+        //       params: { draft }, // 查询参数
+        //       data: this.formData // 请求体参数
+        //     }).then(() => {
+        //       this.$message({
+        //         type: 'success',
+        //         message: '保存成功'
+        //       })
+        //       // 跳转到文章列表页
+        //       this.$router.push('/home/articles')
+        //     })
+        //   } else {
+        //   // 调用发布接口
+        //     this.$axios({
+        //       url: '/articles',
+        //       method: 'post',
+        //       params: { draft }, // 查询参数
+        //       data: this.formData // 请求体参数
+        //     }).then(() => {
+        //       this.$message({
+        //         type: 'success',
+        //         message: '保存成功'
+        //       })
+        //       // 跳转到文章列表页
+        //       this.$router.push('/home/articles')
+        //     })
+        //   }
         }
       })
     },
@@ -118,7 +150,7 @@ export default {
   },
   created () {
     this.getChannels()
-    let { articleId } = this.$route.params
+    let { articleId } = this.$route.params // 获取动态路由参数
     articleId && this.getarticleById(articleId)
   }
 }
