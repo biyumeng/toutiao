@@ -3,6 +3,7 @@ import layoutHeader from './home/layout-header'
 import breadCrumb from './common/bread-crumb'
 import { quillEditor } from 'vue-quill-editor'
 import CoverImage from './publish/cover-image'
+import SelectImage from './publish/select-image'
 import 'quill/dist/quill.core.css'
 import 'quill/dist/quill.snow.css'
 import 'quill/dist/quill.bubble.css'
@@ -14,5 +15,6 @@ export default {
     Vue.component('bread-crumb', breadCrumb)
     Vue.component('quill-editor', quillEditor)
     Vue.component('cover-image', CoverImage)
+    Vue.component('select-image', SelectImage)
   }
 }
