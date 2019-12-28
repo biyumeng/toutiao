@@ -44,7 +44,7 @@ export default {
     // 点击菜单触发
     clickMenu (command) {
       if (command === 'info') {
-        this.$router.push('/home/userinfo')
+        this.$router.push('/home/account')
       } else if (command === 'git') {
         // 跳转git地址
         window.location.href = 'https://github.com/biyumeng/toutiao'
