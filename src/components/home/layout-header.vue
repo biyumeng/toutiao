@@ -22,6 +22,7 @@
 </template>
 
 <script>
+import eventBus from '../../utils/eventBus'
 export default {
   data () {
     return {
@@ -30,17 +31,26 @@ export default {
     }
   },
   created () {
-    // let token = localStorage.getItem('user-token')
-    this.$axios({
-      url: '/user/profile'
-      // headers: {
-      //   Authorization: `Bearer ${token}`
-      // }
-    }).then(result => {
-      this.userInfo = result.data
+    this.getUserInfo()
+    // 开启监听
+    eventBus.$on('updateUserInfo', () => {
+      // 认为别人更新 自己也需要更新
+      this.getUserInfo()
     })
   },
   methods: {
+    // 封装一个更新用的方法
+    getUserInfo () {
+      // let token = localStorage.getItem('user-token')
+      this.$axios({
+        url: '/user/profile'
+      // headers: {
+      //   Authorization: `Bearer ${token}`
+      // }
+      }).then(result => {
+        this.userInfo = result.data
+      })
+    },
     // 点击菜单触发
     clickMenu (command) {
       if (command === 'info') {
