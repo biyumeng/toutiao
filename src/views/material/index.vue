@@ -19,8 +19,8 @@
             <el-tab-pane label="全部图片" name="all">
               <!-- 生成页面结构 -->
               <div class="img-list">
-                <el-card class="img-card" v-for="item in list" :key="item.id">
-                  <img :src="item.url" alt="">
+                <el-card class="img-card" v-for="(item,index) in list" :key="item.id">
+                  <img @click="openDialog(index)" :src="item.url" alt="">
                   <el-row class="operate" type="flex" align="middle" justify="space-around">
                     <i @click="collectOrCancel(item)" :style="{ color:item.is_collected?'red':'#000' }" class="el-icon-star-on"></i>
                     <i @click="delMaterial(item.id)" class="el-icon-delete-solid"></i>
@@ -31,8 +31,8 @@
             </el-tab-pane>
             <el-tab-pane label="收藏图片" name="collect">
               <div class="img-list">
-                <el-card class="img-card" v-for="item in list" :key="item.id">
-                  <img :src="item.url" alt="">
+                <el-card class="img-card" v-for="(item,index) in list" :key="item.id">
+                  <img @click="openDialog(index)" :src="item.url" alt="">
                 </el-card>
               </div>
             </el-tab-pane>
@@ -48,6 +48,13 @@
               @current-change="changePage">
           </el-pagination>
         </el-row>
+        <el-dialog @opened="openEnd" :visible="dialogVisible" @close="dialogVisible=false">
+          <el-carousel ref="myCarosel" :interval="5000" arrow="always" height="600px">
+            <el-carousel-item v-for="(item,index) in list" :key="index">
+              <img style="width:100%;height:100%" :src="item.url" alt="">
+            </el-carousel-item>
+          </el-carousel>
+        </el-dialog>
     </el-card>
 </template>
 
@@ -56,6 +63,7 @@
 export default {
   data () {
     return {
+      dialogVisible: false, // 弹层
       loading: false,
       activeName: 'all', // 当前选中的标签
       list: [], // 接收素材的数据
@@ -63,10 +71,20 @@ export default {
         total: 0,
         pageSize: 12,
         currentPage: 1
-      } // 专门存放分页信息
+      }, // 专门存放分页信息
+      clickIndex: -1 // 走马灯点击的索引
     }
   },
   methods: {
+    // dialog里的回调属性方法
+    openEnd () {
+      this.$refs.myCarosel.setActiveItem(this.clickIndex)
+    },
+    // 打开弹层
+    openDialog (index) {
+      this.dialogVisible = true
+      this.clickIndex = index
+    },
     // 删除用户素材
     delMaterial (id) {
       this.$confirm('您确定要删除此图片吗？').then(() => {
