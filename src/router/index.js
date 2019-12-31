@@ -10,7 +10,8 @@ const routes = [
   {
     path: '/',
     redirect: '/home' // 强制跳转
-  }, {
+  },
+  {
     path: '/home',
     name: 'home',
     component: Home,
@@ -38,6 +39,10 @@ const routes = [
     }, {
       path: 'picture', // 账户信息
       component: () => import('../views/picture')
+    },
+    {
+      path: '*',
+      component: () => import('../views/404')
     }]
   }, {
     path: '/login',
